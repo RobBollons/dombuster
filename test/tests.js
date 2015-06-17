@@ -7,13 +7,42 @@ var Dom = function (elements) {
         return new Dom(elements);
     }
 
-    this.elements = elements;
+    this.elements = elements || [];
+    this.document = document;
 };
 
 Dom.prototype.create = function (elementString) {
-    var tmp            = document.implementation.createHTMLDocument();
+    var tmp = this.document.implementation.createHTMLDocument();
     tmp.body.innerHTML = elementString;
-    return new Dom(tmp.body.children);
+
+    this.elements.push(tmp.body.children[0]);
+    return this;
+};
+
+/*
+	Will call the iterator method over each element in the collection.
+	If the interator returns false the loop will be aborted.
+	If an optional scope object is passed it will be set to the interator's this argument
+*/
+Dom.prototype.each = function (iterator, scope) {
+    if (!(iterator instanceof Function)) {
+        return this;
+    }
+
+    var i,
+        fnScope,
+        fn;
+
+    for (i = 0; i < this.elements.length; i++) {
+        fnScope = scope || this;
+        fn = iterator.bind(fnScope, this.elements[i], i);
+
+        if (fn() === false) {
+            break;
+        }
+    }
+
+    return this;
 };
 
 // TODO: Creare a new work item for this
@@ -7046,17 +7075,60 @@ require('../test/lib/index');
 },{"../test/lib/index":42}],42:[function(require,module,exports){
 'use strict';
 
-var dom    = require('./../../lib/index'),
+var dom = require('./../../lib/index'),
     expect = require('chai').expect;
 
 describe('create', function () {
     it('creates a dom object from a string', function () {
-        var anchorText = dom(document)
-                            .create('<a>Text</a>')
-                            .elements[0]
-                            .innerHTML;
+        var anchorText = dom()
+            .create('<a>Text</a>')
+            .elements[0]
+            .innerHTML;
 
         expect(anchorText).to.equal('Text');
+    });
+});
+
+describe('each', function () {
+    it('iterates each created element', function () {
+        var elements = ['<a>Text1</a>', '<a>Text2</a>', '<a>Text3</a>'];
+        dom()
+            .create(elements[0])
+            .create(elements[1])
+            .create(elements[2])
+            .each(function (elem, index) {
+                expect(elem.outerHTML).to.equal(elements[index]);
+            });
+    });
+
+    it('correctly sets scope when passed in as an argument', function () {
+        function TestScope() {
+
+        }
+
+        dom()
+            .create('<a>test</a>')
+            .each(function () {
+                expect(this).to.be.an.instanceof(TestScope);
+            }, new TestScope());
+    });
+    it('correcly breaks loop if false returned', function () {
+        var index,
+            elements = ['<a>Text1</a>', '<a>Text2</a>', '<a>Text3</a>'];
+
+        dom()
+            .create(elements[0])
+            .create(elements[1])
+            .create(elements[2])
+            .each(function (item, i) {
+                index = i;
+
+                if (i === 1) {
+                    return false;
+                }
+            });
+
+        expect(index).to.equal(1);
     });
 });
 // TODO: Create a new work item for this

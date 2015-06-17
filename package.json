@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "build": "browserify lib/index.js > dist/dombuster.js",
+    "lint": "jscs lib/ test/lib/ && jshint lib/ test/lib/",
     "test:build": "browserify test/index.js > test/tests.js",
     "test:run": "mocha-phantomjs test/runner.html",
-    "test": "npm run test:build && npm run test:run"
+    "test": "npm run lint && npm run test:build && npm run test:run"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,8 @@
   "devDependencies": {
     "browserify": "9.0.8",
     "chai": "^3.0.0",
+    "jscs": "^1.13.1",
+    "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "mocha-phantomjs": "^3.5.3",
     "phantomjs": "^1.9.17"
