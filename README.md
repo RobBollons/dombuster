@@ -45,11 +45,19 @@ This method will call an interator function for each element in the collection. 
     dom().prop(propName[, optional, property, arguments]);
 ```
 This method will get or set a property on the internal elements collection.
-The first argument `prop` is the name of the property to interrogate. If no other parameters are passed its value will be returned. Optionally an arbitrary number of arguments can be passed that are dependent on the property itself.
+The first argument `prop` is the name of the property to interrogate. If no other parameters are passed its value will be returned. Optionally extra parameters can be passed which will be forwarded onto the property itself, see the example below.
 
 
 **NOTE:** When getting a property the property will be retrieved from the first element in the internal collection. When setting a property it will be applied to all elements in the internal collection.
+Setting or getting nested properties is not currently supported. see below:
 
+```javascript
+    var div = document.getElementsByTagName('div')[0];
+    
+    div.nextElementSibling.style // no nested properties.
+```
+
+**Example**:
 ```javascript
     /*
         Create a button,
