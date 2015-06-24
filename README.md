@@ -10,6 +10,7 @@ The browser used to run the tests is phantomjs.
 
 - [Methods](#methods)
   - [Each](#each)
+  - [Prop](#prop)
 
 ## Methods
 
@@ -17,8 +18,10 @@ The browser used to run the tests is phantomjs.
 ``` javascript
 	dom().each(iteratorFN[, thisArg]);
 ```
-This method will call an interator function for each element in the collection. It will pass the interator method the current element being iterated and its index. If the iterator returns false it will abort the iteration. If an optional scope object is passed this will be set to the iterators `this` property, otherwise it will be set to the current `dombuster` object.
 Accepts: interator [fn], scope [object]
+
+
+This method will call an interator function for each element in the collection. It will pass the interator method the current element being iterated and its index. If the iterator returns false it will abort the iteration. If an optional scope object is passed this will be set to the iterators `this` property, otherwise it will be set to the current `dombuster` object.
 
 ```javascript
 	var testScope = {
@@ -35,4 +38,46 @@ Accepts: interator [fn], scope [object]
 			if(item.innerHTML === 'test2')
 				return false; //abort the iteration on the second item
 		}, testScope);
+```
+
+### Prop
+``` javascript
+    dom().prop(propName[, optional, property, arguments]);
+```
+This method will get or set a property on the internal elements collection.
+The first argument `prop` is the name of the property to interrogate. If no other parameters are passed its value will be returned. Optionally extra parameters can be passed which will be forwarded onto the property itself, see the example below.
+
+
+**NOTE:** When getting a property the property will be retrieved from the first element in the internal collection. When setting a property it will be applied to all elements in the internal collection.
+Setting or getting nested properties is not currently supported. see below:
+
+```javascript
+    var div = document.getElementsByTagName('div')[0];
+    
+    div.nextElementSibling.style // no nested properties.
+```
+
+**Example**:
+```javascript
+    /*
+        Create a button,
+        Add an on click handler to the button,
+        In the click handler remove said handler and disable button,
+        Throw exception if button not disabled.
+    */
+    var button = Dom().create('<button>test</button>');
+
+    function clickHandler(){
+        console.log('button clicked');
+        button
+            .prop('removeEventHandler', 'click', clickHandler)
+            .prop('disabled', true);
+
+        if (button.prop('disabled') !== true) {
+            throw 'Button has not been disabled';
+        }
+    }
+
+    button
+        .prop('addEventListener', 'click', clickHandler);
 ```

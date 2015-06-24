@@ -56,6 +56,27 @@ describe('each', function () {
         expect(index).to.equal(1);
     });
 });
+
+describe('prop', function () {
+    it('will correctly set the value of a property', function () {
+        var d = dom()
+                .create('<button>test</button>')
+                .prop('disabled', true),
+            buttonElem = d.elements[0];
+
+        expect(buttonElem.disabled).to.equal(true);
+    });
+
+    it('will correctly retrieve the value of a property', function () {
+        var d = dom().create('<button class="testClass">test</button>'),
+            className = d.prop('className'),
+            innerHtml = d.prop('innerHTML');
+
+        expect(className).to.equal('testClass');
+        expect(innerHtml).to.equal('test');
+    });
+});
+
 // TODO: Create a new work item for this
 //describe('find', function () {
 //    it('finds an element ', function () {
