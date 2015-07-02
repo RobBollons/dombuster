@@ -1,113 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-
-var Dom = function (elements) {
-    if (!(this instanceof Dom)) {
-        return new Dom(elements);
-    }
-
-    this.elements = elements || [];
-    this.document = document;
-};
-
-Dom.prototype.create = function (elementString) {
-    var tmp = this.document.implementation.createHTMLDocument();
-    tmp.body.innerHTML = elementString;
-
-    this.elements.push(tmp.body.children[0]);
-    return this;
-};
-
-/*
-	Will call the iterator method over each element in the collection.
-	If the interator returns false the loop will be aborted.
-	If an optional scope object is passed it will be set to the interator's this argument
-*/
-Dom.prototype.each = function (iterator, scope) {
-    if (!(iterator instanceof Function)) {
-        return this;
-    }
-
-    var i,
-        fnScope,
-        fn;
-
-    for (i = 0; i < this.elements.length; i++) {
-        fnScope = scope || this;
-        fn = iterator.bind(fnScope, this.elements[i], i);
-
-        if (fn() === false) {
-            break;
-        }
-    }
-
-    return this;
-};
-
-/*
-    Will get properties of the first element in the collection.
-    Or will set the property of all elements in collection.
-*/
-Dom.prototype.prop = function () {
-    var args = Array.prototype.slice.call(arguments),
-        prop = args[0],
-        hasValues = args.length > 1;
-
-    //Add empty element ready for later
-    args.unshift(undefined);
-
-    if (prop === undefined || typeof prop !== 'string') {
-        throw 'Prop not defined or not a string';
-    }
-
-    if (hasValues === false) {
-        return this.elements.length > 0 ? getter(this.elements[0], prop) : undefined;
-    } else {
-        this.each(function (elem) {
-            //args contains extra parameters passed in that the property may require
-            args[0] = elem;
-            setter.apply(undefined, args);
-        });
-
-        return this;
-    }
-
-    function setter() {
-        var setArgs = Array.prototype.slice.call(arguments),
-            el = setArgs[0],
-            prop = setArgs[1];
-
-        //Shouldn't use splice on arguments array directly, it defeats optimizations in JavaScript engine, use clone.
-        //Remove element and property values leaving any extra parameters need for the property itself.
-        setArgs.splice(0, 2);
-
-        if (typeof el[prop] === 'function') {
-            el[prop].apply(undefined, setArgs);
-        } else {
-            el[prop] = setArgs[0];
-        }
-    }
-
-    function getter(el, prop) {
-        if (typeof el[prop] === 'function') {
-            return el[prop]();
-        } else {
-            return el[prop];
-        }
-    }
-};
-
-// TODO: Creare a new work item for this
-//Dom.prototype.find = function (selector) {
-//    var tmp            = document.implementation.createHTMLDocument();
-//    var matchedElements = this.elements.querySelectorAll(selector);
-//    return new Dom(matchedElements);
-//};
-
-module.exports = Dom;
-
-},{}],2:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -1523,7 +1414,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":3,"ieee754":4,"is-array":5}],3:[function(require,module,exports){
+},{"base64-js":2,"ieee754":3,"is-array":4}],2:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -1649,7 +1540,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -1735,7 +1626,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 /**
  * isArray
@@ -1770,10 +1661,10 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = require('./lib/chai');
 
-},{"./lib/chai":7}],7:[function(require,module,exports){
+},{"./lib/chai":6}],6:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -1868,7 +1759,7 @@ exports.use(should);
 var assert = require('./chai/interface/assert');
 exports.use(assert);
 
-},{"./chai/assertion":8,"./chai/config":9,"./chai/core/assertions":10,"./chai/interface/assert":11,"./chai/interface/expect":12,"./chai/interface/should":13,"./chai/utils":26,"assertion-error":34}],8:[function(require,module,exports){
+},{"./chai/assertion":7,"./chai/config":8,"./chai/core/assertions":9,"./chai/interface/assert":10,"./chai/interface/expect":11,"./chai/interface/should":12,"./chai/utils":25,"assertion-error":33}],7:[function(require,module,exports){
 /*!
  * chai
  * http://chaijs.com
@@ -2001,7 +1892,7 @@ module.exports = function (_chai, util) {
   });
 };
 
-},{"./config":9}],9:[function(require,module,exports){
+},{"./config":8}],8:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -2058,7 +1949,7 @@ module.exports = {
 
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*!
  * chai
  * http://chaijs.com
@@ -3681,7 +3572,7 @@ module.exports = function (chai, _) {
 
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4959,7 +4850,7 @@ module.exports = function (chai, util) {
   ('Throw', 'throws');
 };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -4994,7 +4885,7 @@ module.exports = function (chai, util) {
   };
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5094,7 +4985,7 @@ module.exports = function (chai, util) {
   chai.Should = loadShould;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*!
  * Chai - addChainingMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5207,7 +5098,7 @@ module.exports = function (ctx, name, method, chainingBehavior) {
   });
 };
 
-},{"../config":9,"./flag":17,"./transferFlags":33}],15:[function(require,module,exports){
+},{"../config":8,"./flag":16,"./transferFlags":32}],14:[function(require,module,exports){
 /*!
  * Chai - addMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5252,7 +5143,7 @@ module.exports = function (ctx, name, method) {
   };
 };
 
-},{"../config":9,"./flag":17}],16:[function(require,module,exports){
+},{"../config":8,"./flag":16}],15:[function(require,module,exports){
 /*!
  * Chai - addProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5294,7 +5185,7 @@ module.exports = function (ctx, name, getter) {
   });
 };
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*!
  * Chai - flag utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5328,7 +5219,7 @@ module.exports = function (obj, key, value) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*!
  * Chai - getActual utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5348,7 +5239,7 @@ module.exports = function (obj, args) {
   return args.length > 4 ? args[4] : obj._obj;
 };
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*!
  * Chai - getEnumerableProperties utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5375,7 +5266,7 @@ module.exports = function getEnumerableProperties(object) {
   return result;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /*!
  * Chai - message composition utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5427,7 +5318,7 @@ module.exports = function (obj, args) {
   return flagMsg ? flagMsg + ': ' + msg : msg;
 };
 
-},{"./flag":17,"./getActual":18,"./inspect":27,"./objDisplay":28}],21:[function(require,module,exports){
+},{"./flag":16,"./getActual":17,"./inspect":26,"./objDisplay":27}],20:[function(require,module,exports){
 /*!
  * Chai - getName utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5449,7 +5340,7 @@ module.exports = function (func) {
   return match && match[1] ? match[1] : "";
 };
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /*!
  * Chai - getPathInfo utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5561,7 +5452,7 @@ function _getPathValue (parsed, obj, index) {
   return res;
 }
 
-},{"./hasProperty":25}],23:[function(require,module,exports){
+},{"./hasProperty":24}],22:[function(require,module,exports){
 /*!
  * Chai - getPathValue utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5605,7 +5496,7 @@ module.exports = function(path, obj) {
   return info.value;
 }; 
 
-},{"./getPathInfo":22}],24:[function(require,module,exports){
+},{"./getPathInfo":21}],23:[function(require,module,exports){
 /*!
  * Chai - getProperties utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5642,7 +5533,7 @@ module.exports = function getProperties(object) {
   return result;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /*!
  * Chai - hasProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -5707,7 +5598,7 @@ module.exports = function hasProperty(name, obj) {
   return name in obj;
 };
 
-},{"type-detect":39}],26:[function(require,module,exports){
+},{"type-detect":38}],25:[function(require,module,exports){
 /*!
  * chai
  * Copyright(c) 2011 Jake Luer <jake@alogicalparadox.com>
@@ -5835,7 +5726,7 @@ exports.addChainableMethod = require('./addChainableMethod');
 exports.overwriteChainableMethod = require('./overwriteChainableMethod');
 
 
-},{"./addChainableMethod":14,"./addMethod":15,"./addProperty":16,"./flag":17,"./getActual":18,"./getMessage":20,"./getName":21,"./getPathInfo":22,"./getPathValue":23,"./hasProperty":25,"./inspect":27,"./objDisplay":28,"./overwriteChainableMethod":29,"./overwriteMethod":30,"./overwriteProperty":31,"./test":32,"./transferFlags":33,"deep-eql":35,"type-detect":39}],27:[function(require,module,exports){
+},{"./addChainableMethod":13,"./addMethod":14,"./addProperty":15,"./flag":16,"./getActual":17,"./getMessage":19,"./getName":20,"./getPathInfo":21,"./getPathValue":22,"./hasProperty":24,"./inspect":26,"./objDisplay":27,"./overwriteChainableMethod":28,"./overwriteMethod":29,"./overwriteProperty":30,"./test":31,"./transferFlags":32,"deep-eql":34,"type-detect":38}],26:[function(require,module,exports){
 // This is (almost) directly from Node.js utils
 // https://github.com/joyent/node/blob/f8c335d0caf47f16d31413f89aa28eda3878e3aa/lib/util.js
 
@@ -6170,7 +6061,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-},{"./getEnumerableProperties":19,"./getName":21,"./getProperties":24}],28:[function(require,module,exports){
+},{"./getEnumerableProperties":18,"./getName":20,"./getProperties":23}],27:[function(require,module,exports){
 /*!
  * Chai - flag utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6221,7 +6112,7 @@ module.exports = function (obj) {
   }
 };
 
-},{"../config":9,"./inspect":27}],29:[function(require,module,exports){
+},{"../config":8,"./inspect":26}],28:[function(require,module,exports){
 /*!
  * Chai - overwriteChainableMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6276,7 +6167,7 @@ module.exports = function (ctx, name, method, chainingBehavior) {
   };
 };
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*!
  * Chai - overwriteMethod utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6329,7 +6220,7 @@ module.exports = function (ctx, name, method) {
   }
 };
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*!
  * Chai - overwriteProperty utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6385,7 +6276,7 @@ module.exports = function (ctx, name, getter) {
   });
 };
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /*!
  * Chai - test utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6413,7 +6304,7 @@ module.exports = function (obj, args) {
   return negate ? !expr : expr;
 };
 
-},{"./flag":17}],33:[function(require,module,exports){
+},{"./flag":16}],32:[function(require,module,exports){
 /*!
  * Chai - transferFlags utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -6459,7 +6350,7 @@ module.exports = function (assertion, object, includeAll) {
   }
 };
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*!
  * assertion-error
  * Copyright(c) 2013 Jake Luer <jake@qualiancy.com>
@@ -6573,10 +6464,10 @@ AssertionError.prototype.toJSON = function (stack) {
   return props;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 module.exports = require('./lib/eql');
 
-},{"./lib/eql":36}],36:[function(require,module,exports){
+},{"./lib/eql":35}],35:[function(require,module,exports){
 /*!
  * deep-eql
  * Copyright(c) 2013 Jake Luer <jake@alogicalparadox.com>
@@ -6835,10 +6726,10 @@ function objectEqual(a, b, m) {
   return true;
 }
 
-},{"buffer":2,"type-detect":37}],37:[function(require,module,exports){
+},{"buffer":1,"type-detect":36}],36:[function(require,module,exports){
 module.exports = require('./lib/type');
 
-},{"./lib/type":38}],38:[function(require,module,exports){
+},{"./lib/type":37}],37:[function(require,module,exports){
 /*!
  * type-detect
  * Copyright(c) 2013 jake luer <jake@alogicalparadox.com>
@@ -6982,9 +6873,9 @@ Library.prototype.test = function (obj, type) {
   }
 };
 
-},{}],39:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"./lib/type":40,"dup":37}],40:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"./lib/type":39,"dup":36}],39:[function(require,module,exports){
 /*!
  * type-detect
  * Copyright(c) 2013 jake luer <jake@alogicalparadox.com>
@@ -7120,15 +7011,135 @@ Library.prototype.test = function(obj, type) {
   }
 };
 
+},{}],40:[function(require,module,exports){
+'use strict';
+
+/*
+    Will instantiate a DOM object from the provided string
+*/
+module.exports = function (elementString) {
+    var tmp = this.document.implementation.createHTMLDocument();
+    tmp.body.innerHTML = elementString;
+
+    this.elements.push(tmp.body.children[0]);
+    return this;
+};
+
 },{}],41:[function(require,module,exports){
+'use strict';
+
+/*
+    Will call the iterator method over each element in the collection.
+    If the interator returns false the loop will be aborted.
+    If an optional scope object is passed it will be set to the interator's this argument
+*/
+module.exports = function (iterator, scope) {
+    if (!(iterator instanceof Function)) {
+        return this;
+    }
+
+    var i,
+        fnScope,
+        fn;
+
+    for (i = 0; i < this.elements.length; i++) {
+        fnScope = scope || this;
+        fn = iterator.bind(fnScope, this.elements[i], i);
+
+        if (fn() === false) {
+            break;
+        }
+    }
+
+    return this;
+};
+
+},{}],42:[function(require,module,exports){
+'use strict';
+
+/*
+    Will get properties of the first element in the collection.
+    Or will set the property of all elements in collection.
+*/
+module.exports = function () {
+    var args = Array.prototype.slice.call(arguments),
+        prop = args[0],
+        hasValues = args.length > 1;
+
+    //Add empty element ready for later
+    args.unshift(undefined);
+
+    if (prop === undefined || typeof prop !== 'string') {
+        throw 'Prop not defined or not a string';
+    }
+
+    if (hasValues === false) {
+        return this.elements.length > 0 ? getter(this.elements[0], prop) : undefined;
+    } else {
+        this.each(function (elem) {
+            //args contains extra parameters passed in that the property may require
+            args[0] = elem;
+            setter.apply(undefined, args);
+        });
+
+        return this;
+    }
+
+    function setter() {
+        var setArgs = Array.prototype.slice.call(arguments),
+            el = setArgs[0],
+            prop = setArgs[1];
+
+        //Shouldn't use splice on arguments array directly, it defeats optimizations in JavaScript engine, use clone.
+        //Remove element and property values leaving any extra parameters need for the property itself.
+        setArgs.splice(0, 2);
+
+        if (typeof el[prop] === 'function') {
+            el[prop].apply(undefined, setArgs);
+        } else {
+            el[prop] = setArgs[0];
+        }
+    }
+
+    function getter(el, prop) {
+        if (typeof el[prop] === 'function') {
+            return el[prop]();
+        } else {
+            return el[prop];
+        }
+    }
+};
+
+},{}],43:[function(require,module,exports){
+'use strict';
+
+
+var Dom = function (elements) {
+    if (!(this instanceof Dom)) {
+        return new Dom(elements);
+    }
+
+    this.elements = elements || [];
+    this.document = document;
+};
+
+Dom.prototype.create = require('./components/create');
+
+Dom.prototype.each = require('./components/each');
+
+Dom.prototype.prop = require('./components/prop');
+
+module.exports = Dom;
+
+},{"./components/create":40,"./components/each":41,"./components/prop":42}],44:[function(require,module,exports){
 'use strict';
 
 require('../test/lib/index');
 
-},{"../test/lib/index":42}],42:[function(require,module,exports){
+},{"../test/lib/index":45}],45:[function(require,module,exports){
 'use strict';
 
-var dom = require('./../../lib/index'),
+var dom = require('./../../src/index'),
     expect = require('chai').expect;
 
 describe('create', function () {
@@ -7216,4 +7227,4 @@ describe('prop', function () {
 //    });
 //});
 
-},{"./../../lib/index":1,"chai":6}]},{},[41]);
+},{"./../../src/index":43,"chai":5}]},{},[44]);

@@ -1,6 +1,6 @@
 'use strict';
 
-var dom = require('./../../lib/index'),
+var dom = require('./../../src/index'),
     expect = require('chai').expect;
 
 describe('create', function () {

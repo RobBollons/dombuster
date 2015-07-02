@@ -4,8 +4,8 @@
   "description": "A simple DOM query/manipulation library to mimic jQuerys more common functionality",
   "main": "index.js",
   "scripts": {
-    "build": "browserify lib/index.js > dist/dombuster.js",
-    "lint": "jscs lib/ test/lib/ && jshint lib/ test/lib/",
+    "build": "browserify src/index.js > dist/dombuster.js",
+    "lint": "jscs src/ test/lib/ && jshint src/ test/lib/",
     "test:build": "browserify test/index.js > test/tests.js",
     "test:run": "mocha-phantomjs test/runner.html",
     "test": "npm run lint && npm run test:build && npm run test:run"
