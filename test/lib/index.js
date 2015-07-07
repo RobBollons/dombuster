@@ -1,6 +1,6 @@
 'use strict';
 
-var dom = require('./../../src/index'),
+var dom = require('./../../src/domFactory'),
     expect = require('chai').expect;
 
 describe('create', function () {
@@ -74,6 +74,22 @@ describe('prop', function () {
 
         expect(className).to.equal('testClass');
         expect(innerHtml).to.equal('test');
+    });
+});
+
+describe('prop', function () {
+    it('will correctly find all div elements in the collection', function () {
+        var elements = ['<div>Text1</div>', '<a>Text2</a>', '<div>Text3<div>Text4</div></div>'],
+            d = dom(),
+            foundD;
+
+        d.create(elements[0])
+            .create(elements[0])
+            .create(elements[0]);
+
+        foundD = d.find('div');
+
+        expect(foundD.elements.length).to.equal(3);
     });
 });
 

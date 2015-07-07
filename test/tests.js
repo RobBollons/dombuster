@@ -7057,6 +7057,27 @@ module.exports = function (iterator, scope) {
 },{}],42:[function(require,module,exports){
 'use strict';
 
+var nodeToArray = require('../utils/nodeListToArray'),
+    factory = require('../domFactory.js');
+/*
+    Will instantiate a DOM object from the provided string
+*/
+module.exports = function (selector) {
+    var tmpDoc = this.document.implementation.createHTMLDocument(),
+        elements;
+
+    this.each(function (elem) {
+        tmpDoc.body.appendChild(elem);
+    });
+
+    elements = tmpDoc.querySelectorAll(selector);
+    console.log(factory);
+    return factory(nodeToArray(elements));
+};
+
+},{"../domFactory.js":44,"../utils/nodeListToArray":46}],43:[function(require,module,exports){
+'use strict';
+
 /*
     Will get properties of the first element in the collection.
     Or will set the property of all elements in collection.
@@ -7110,36 +7131,62 @@ module.exports = function () {
     }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
+var dom = require('./index');
 
-var Dom = function (elements) {
-    if (!(this instanceof Dom)) {
-        return new Dom(elements);
-    }
-
-    this.elements = elements || [];
-    this.document = document;
+module.exports = function (elements) {
+    return Object.create(dom, {
+        elements: {
+            value: (elements || []),
+            writeable: true,
+            configurable: false
+        },
+        document: {
+            value: document,
+            writeable: false,
+            configurable: false
+        }
+    });
 };
 
-Dom.prototype.create = require('./components/create');
+},{"./index":45}],45:[function(require,module,exports){
+'use strict';
 
-Dom.prototype.each = require('./components/each');
+module.exports = {
+    create: require('./components/create'),
+    each: require('./components/each'),
+    prop: require('./components/prop'),
+    find: require('./components/find')
+};
 
-Dom.prototype.prop = require('./components/prop');
+},{"./components/create":40,"./components/each":41,"./components/find":42,"./components/prop":43}],46:[function(require,module,exports){
+'use strict';
 
-module.exports = Dom;
+/*
+    Will extract node elements from list and return them as array
+*/
+module.exports = function (nodeList) {
+    var arr = [],
+        i = nodeList.length - 1;
 
-},{"./components/create":40,"./components/each":41,"./components/prop":42}],44:[function(require,module,exports){
+    for (i; i >= 0; i--) {
+        arr.unshift(nodeList[i]);
+    }
+
+    return arr;
+};
+
+},{}],47:[function(require,module,exports){
 'use strict';
 
 require('../test/lib/index');
 
-},{"../test/lib/index":45}],45:[function(require,module,exports){
+},{"../test/lib/index":48}],48:[function(require,module,exports){
 'use strict';
 
-var dom = require('./../../src/index'),
+var dom = require('./../../src/domFactory'),
     expect = require('chai').expect;
 
 describe('create', function () {
@@ -7216,6 +7263,22 @@ describe('prop', function () {
     });
 });
 
+describe('prop', function () {
+    it('will correctly find all div elements in the collection', function () {
+        var elements = ['<div>Text1</div>', '<a>Text2</a>', '<div>Text3<div>Text4</div></div>'],
+            d = dom(),
+            foundD;
+
+        d.create(elements[0])
+            .create(elements[0])
+            .create(elements[0]);
+
+        foundD = d.find('div');
+
+        expect(foundD.elements.length).to.equal(3);
+    });
+});
+
 // TODO: Create a new work item for this
 //describe('find', function () {
 //    it('finds an element ', function () {
@@ -7227,4 +7290,4 @@ describe('prop', function () {
 //    });
 //});
 
-},{"./../../src/index":43,"chai":5}]},{},[44]);
+},{"./../../src/domFactory":44,"chai":5}]},{},[47]);

@@ -1,19 +1,8 @@
 'use strict';
 
-
-var Dom = function (elements) {
-    if (!(this instanceof Dom)) {
-        return new Dom(elements);
-    }
-
-    this.elements = elements || [];
-    this.document = document;
+module.exports = {
+    create: require('./components/create'),
+    each: require('./components/each'),
+    prop: require('./components/prop'),
+    find: require('./components/find')
 };
-
-Dom.prototype.create = require('./components/create');
-
-Dom.prototype.each = require('./components/each');
-
-Dom.prototype.prop = require('./components/prop');
-
-module.exports = Dom;
